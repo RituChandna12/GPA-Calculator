@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <link rel="stylesheet" href="styles.css">
+  <title>GPA Calculator</title>
+
+  <!-- Bootstrap Scripts -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@500;700&display=swap" rel="stylesheet"> 
+
+</head>
+
+<body onload="createTable()">
+  <div class="container-fluid">
+    <h1 class="title">GPA Calculator</h1>
+    <h3 class="welcome">
+      Welcome! Add / remove courses below and calculate your GPA.
+    </h3>
+  
+  
+  
+    <div id="cont"></div> <!-- the container to add the TABLE -->
+
+    <div id="outer">
+      <div class="inner"><input type="button" value="Remove All" class="btn btn-danger three" onClick="window.location.reload(true)"></div>
+      <div class="inner"><input type="button" id="bt" class="btn btn-outline-dark three" value="Calculate GPA" onclick="submit()" /></div>
+      <div class="inner"><input type="button" id="addRow" data-inline='true'class="btn btn-success three" value="Add Course" onclick="addRow()" /></div>
+    </div>
+
+    <h4 id='output'>Press 'Calculate GPA' button.</h4>
+  </div>
+
+</body>
+
+<script>
+
+  let arrHead = new Array(); // array for header.
+  arrHead = ['Sr.No.', 'Course', 'Credits', 'Grade', ''];
+
+  // first create TABLE structure with the headers.
+  let createTable = () => {
+    let empTable = document.createElement('table');
+    empTable.setAttribute('id', 'empTable'); // table id.
+    empTable.setAttribute('class', 'center');
+    let tr = empTable.insertRow(-1);
+    for (let h = 0; h < arrHead.length; h++) {
+      let th = document.createElement('th'); // create table headers
+      th.innerHTML = arrHead[h];
+      tr.appendChild(th);
+    }
+
+    let div = document.getElementById('cont');
+    div.appendChild(empTable); // add the TABLE to the container.
+    addRow();
+    addRow();
+    addRow();
+
+    var $tblrow = $(".data")
+    var ele = $tblrow.find(".course")[0];
+    console.log(ele);
+    ele.focus();
+  }
+
+
+
+  // now, add a new row to the TABLE.
+  let addRow = () => {
+    let empTab = document.getElementById('empTable');
+
+    //console.log(veri());
+    let rowCnt = empTab.rows.length; // table row count.
+    let tr = empTab.insertRow(rowCnt); // the table row.
+    tr = empTab.insertRow(rowCnt);
+    tr.setAttribute('class', 'data');
+
+    var $tblrows = $(".data");
+    //document.getElementById("output").innerHTML = '';
+
+    for (let c = 0; c < arrHead.length; c++) {
+      let td = document.createElement('td'); // table definition.
+      td = tr.insertCell(c);
+      if(c === 0){
+        let ele = document.createElement('p');
+        ele.setAttribute('class', 'count');
+        ele.innerHTML = ($tblrows.length ).toString();
+
+        td.appendChild(ele);
+      }
+      else if (c === 4) { // the first column.
+        // add a button in every new row in the first column.
+        let button = document.createElement('input');
+
+        // set input attributes.
+        button.setAttribute('type', 'button');
+        button.setAttribute('value', 'x');
+        button.setAttribute('class', 'btn btn-danger');
+        button.setAttribute('title', 'Remove')
+
+        // add button's 'onclick' event.
+        button.setAttribute('onclick', 'removeRow(this)');
+
+        td.appendChild(button);
+      } else if (c === 2) {
+        // 2nd, 3rd and 4th column, will have textbox.
+        let ele = document.createElement('input');
+        ele.setAttribute('type', 'number');
+        ele.setAttribute('value', '');
+        ele.setAttribute('min', 0);
+        ele.setAttribute('class', 'unit');
+        ele.setAttribute("oninput", "detect_change()");
+
+        td.appendChild(ele);
+      } else if (c === 1) {
+        let ele = document.createElement('input');
+        ele.setAttribute('type', 'text');
+        ele.setAttribute('value', '');
+        ele.setAttribute('class', 'course');
+        ele.setAttribute("oninput", "detect_change()");
+
+        td.appendChild(ele);
+        const end = ele.value.length;
+
+        ele.setSelectionRange(end, end);
+        
+        //console.log(ele);
+        ele.focus();
+      } else {
+        let ele = document.createElement('input');
+        ele.setAttribute('type', 'text');
+        ele.setAttribute('value', '');
+        ele.setAttribute('class', 'grade');
+        ele.setAttribute("oninput", "detect_change()");
+
+        td.appendChild(ele);
+      }
+    }
+  }
+
+
+  // delete TABLE row function.
+  let removeRow = (oButton) => {
+    let empTab = document.getElementById('empTable');
+    empTab.deleteRow(oButton.parentNode.parentNode.rowIndex);
+    detect_change();
+    var $tblrows = $(".data");
+    var count = 1;
+    //console.log($tblrows);
+    $tblrows.each(function() {
+      var $tblrow = $(this);
+      //console.log($tblrow.find(".count"));
+      //console.log($tblrow.find(".count")[0]);
+      $tblrow.find(".count")[0].innerText = count.toString();
+      count++;
+      
+
+    });
+
+    // button -> td -> tr.
+  }
+
+  // function to extract and submit table data.
+  let submit = () => {
+    let myTab = document.getElementById('empTable');
+    let arrValues = new Array();
+
+    // loop through each row of the table.
+    var sum = 0;
+    var unitc = 0;
+    debugger;
+
+    var $tblrows = $(".data");
+    var flag = true;
+
+    $tblrows.each(function() {
+      var $tblrow = $(this);
+      console.log($tblrow);
+
+      var course = $tblrow.find(".course").val();
+      var grade = $tblrow.find(".grade").val();
+      var un = $tblrow.find(".unit").val();
+      console.log(course);
+
+      console.log(course == null || course == '');
+      if(parseInt(un)==parseFloat(un)) console.log("true");
+      else console.log("false");
+
+      if (course == null || course == '') {
+        if ((grade == null || grade == '') && (un == null || un == ''))
+        ;
+        else {
+          alert("COURSE-NAME required in ROW "+$tblrow.find(".count")[0].innerText+".");
+          flag = false;
+
+          var ele = $tblrow.find(".course")[0];
+          ele.focus();
+
+          return false;
+        }
+      }
+      
+      else if (un == null || un == '') {
+        if ((course == null || course == '') && (grade == null || grade == ''))
+        ;
+        else {
+          alert("COURSE-CREDITS required in ROW "+$tblrow.find(".count")[0].innerText+".");
+          flag = false;
+          var ele = $tblrow.find(".unit")[0];
+          ele.focus();
+          return false;
+        }
+
+      }
+
+      else if(parseInt(un)<0){
+        alert("Course Credits should be a positive integer.\nEnter valid COURSE-CREDITS in ROW "+$tblrow.find(".count")[0].innerText+".");
+        flag = false;
+          var ele = $tblrow.find(".unit")[0];
+          ele.focus();
+          return false;
+      }
+
+      else if (parseInt(un)!=parseFloat(un)){
+        alert("Course Credits should be a positive integer.\nEnter valid COURSE-CREDITS in ROW "+$tblrow.find(".count")[0].innerText+".");
+          flag = false;
+          var ele = $tblrow.find(".unit")[0];
+          ele.focus();
+          return false;
+      }
+      
+      else if (grade == null || grade == '') {
+        if ((course == null || course == '') && (un == null || un == ''))
+        ;
+        else {
+          alert("COURSE-GRADE required in ROW "+$tblrow.find(".count")[0].innerText+".");
+          flag = false;
+          var ele = $tblrow.find(".grade")[0];
+          ele.focus();
+          return false;
+        }
+
+      }
+      
+      else if(grade != "A" && grade != "A-" && grade != "B" && grade != "B-" && grade != "C" && grade != "C-" && grade != "D" && grade != "E"){
+        alert("Enter valid COURSE-GRADE in ROW "+$tblrow.find(".count")[0].innerText+".");
+          flag = false;
+          var ele = $tblrow.find(".grade")[0];
+          ele.focus();
+          return false;
+      }
+
+      else {
+        if (grade == "A") {
+          sum += 4 * parseInt(un);
+          unitc += parseInt(un);
+        } else if (grade == "A-") {
+          sum += 4 * parseInt(un);
+          unitc += parseInt(un);
+        } else if (grade == "B") {
+          sum += 3.5 * parseInt(un);
+          unitc += parseInt(un);
+        } else if (grade == "B-") {
+          sum += 3 * parseInt(un);
+          unitc += parseInt(un);
+        } else if (grade == "C") {
+          sum += 2.5 * parseInt(un);
+          unitc += parseInt(un);
+        } else if (grade == "C-") {
+          sum += 2 * parseInt(un);
+          unitc += parseInt(un);
+        } else if (grade == "D") {
+          sum += 2 * parseInt(un);
+          unitc += parseInt(un);
+        } else if (grade == "E") {
+          sum += 0;
+          unitc += parseInt(un);
+        }
+      }
+
+    });
+    console.log(sum);
+    console.log(sum / unitc);
+    if(flag==true && unitc>0){
+      document.getElementById('output').innerHTML = "Your GPA is : "+(sum / unitc).toFixed(2);
+      document.getElementById('output').style = "color:green";
+    }
+    else if(flag== true && unitc==0){
+      document.getElementById('output').innerHTML = "Your GPA could not be calculated.";
+      document.getElementById('output').style = "color:red";
+    }
+  }
+
+
+function detect_change() {
+    document.getElementById('output').innerHTML = "Press 'Calculate GPA' button.";
+    document.getElementById('output').style = "color:black";
+        }
+
+</script>
+
+</html>
